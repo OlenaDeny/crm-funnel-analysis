@@ -1,0 +1,19 @@
+# Core
+pandas
+numpy
+
+# Visualization
+matplotlib
+seaborn
+plotly
+dash
+
+# Statistics / time series
+statsmodels
+
+# Excel I/O (used by pd.read_excel / to_excel)
+openpyxl
+
+# Notebook environment
+jupyter
+ipython
