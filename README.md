@@ -1,81 +1,117 @@
-# CRM Funnel & Unit Economics Analysis — Online Coding School
+# CRM Funnel Analysis: unit economics, channels, sales team and a testable growth hypothesis
 
-End-to-end analysis of a CRM dataset for an online coding school: from raw export to a concrete growth recommendation, backed by unit economics.
+End-to-end analytics project on CRM data of an online IT school (July 2023 - May 2024): data preparation, marketing and sales analytics, unit economics with a metrics tree, and a growth hypothesis with an A/B test design.
 
-**Revenue analyzed:** €3.35M · **Paid clients (UA):** 17,250 · **Paying students:** 802 · **CLTV/CAC:** 24.2x
+**Business question:** where does the money come from, where does the funnel leak, and what is the fastest lever to grow margin?
 
-## Business problem
-
-The school had calls, deals, contacts and ad-spend data sitting in separate exports, with no clear view of where the funnel was actually leaking money. The question driving this project: **which single lever, if pulled, grows profit the most without a bigger ad budget?**
-
-## Approach
-
-1. **Data preparation** (`01_data_prepare_*`) — cleaned and merged four raw exports (calls, contacts, deals, ad spend) into a shared schema: standardized column names, resolved duplicates and conflicting dates across sources, recovered missing manager/city/language-level values through cross-referencing, and documented every fill-in decision inline.
-2. **Funnel & time-series analysis** (`02_crm_data_analytics`) — traced the path from ad click to paying student, measured SLA (response time) against conversion, scored lead sources and campaigns by quality and ROMI, and compared manager performance.
-3. **Unit economics & growth lever** (`03_crm_product_analytics`) — calculated UA/CPA/C1/CLTV/CAC/CM by product, applied a Theory-of-Constraints lens to find the bottleneck, and ran a scenario simulation (+15% on the chosen metric) to quantify the expected profit gain.
-
-## Key findings
-
-**Unit economics (Jul 2023 – May 2024)**
+## Key results
 
 | Metric | Value |
-|---|---|
-| Revenue / marketing budget | €3.35M / €138K (ROMI ≈ 2,320%) |
-| Paid clients → students (C1) | 17,250 → 802 (4.65%) |
-| CPA / CAC | €8.01 / €172 |
-| CLTV | €4,174 — **24.2x CAC** |
-| Avg. study length / ticket | 5.7 months at €737/month |
+| :--- | ---: |
+| Revenue | EUR 3.35M |
+| Marketing budget | EUR 138K (4.1% of revenue) |
+| ROMI | 2,323% |
+| Leads / paying students | 18,250 / 810 |
+| Paying students per lead (C1) | 4.4% |
+| CAC (cost of a paying student) | EUR 171 |
+| CLTV (revenue per student, accumulated to date) | EUR 4,132 |
+| **CLTV / CAC** | **24x** |
 
-Revenue is concentrated in Digital Marketing (64%), followed by UX/UI Design (26%) and Web Developer (10%). One-time payment accounts for 70% of students and 79% of revenue.
+![KPI](assets/04_01_kpi.png)
 
-**Where the funnel leaks**
-1. **Lead quality** — only 28% of leads are rated A–C. Google Ads takes 38.5% of the budget at roughly twice Facebook's cost per lead, and loses 43.6% of its deals within 3 days.
-2. **Speed** — median first response is 5.5 hours, and only 19% of closed deals were contacted within an hour. Facebook, the largest lead source, waits up to 38 hours on average.
-3. **Sales team** — the top 4 managers generate 59% of revenue; 9 managers closed no deals at all while still receiving 8.8% of leads.
-4. **Data capture** — German level is known for only 8% of leads; 12% of revenue has no campaign attribution.
+### What the analysis shows
 
-**The growth lever: C1**
+1. **Unit economics are strong, so the growth lever is not cheaper traffic.** Marketing is 4.1% of revenue: a 10% cheaper acquisition adds about EUR 14K of margin, a 10% higher lead-to-student conversion adds about EUR 335K.
+2. **Conversion is the weak spot and differs widely by channel.** The same product converts at 1.8% for the CRM base and at 9.6% for Organic.
+3. **Google Ads is the most expensive channel:** 38.5% of the budget, 21% of revenue, EUR 327 per student against EUR 163 for Facebook Ads.
+4. **First response is slow:** the median time to the first call is 5.5 hours, and only 19% of closed deals were contacted within an hour. Faster calls go together with better conversion (observational, tested in the experiment design).
+5. **The sales team is uneven:** the top 4 managers bring 59% of revenue; 9 managers with no sales hold 8.8% of all leads. Managers are compared per active month and adjusted for the channel mix of their leads.
 
-With unit economics this healthy (CLTV at 24x CAC), the constraint isn't budget — it's conversion. C1 varies sharply by channel, from 1.8% (CRM base) to 9.7% (Organic), which points to a process problem, not a demand problem. Facebook alone generates ~25% of all leads but gets a response 38 hours later on average — well past the point where interest is still warm.
+6. **Lead quality is falling while volume grows:** between Aug-Nov 2023 and Dec 2023-Mar 2024 the number of leads rose 50%, but the share of leads rated A-C dropped from 38.8% to 25.8% (about 20% in Feb-May 2024), while conversion held (5.4% to 5.0%).
 
-A 15% relative uplift in C1 is projected to add **~120 students and ~€0.5M in revenue at constant spend**. Because the median time-to-payment is 17.5 days, a 2-week A/B test has to be read on leading indicators rather than final conversion — the test design is in `03_crm_product_analytics.ipynb`, Section 5.
+![Funnel](assets/04_02_funnel.png)
+
+![Channel scorecard](assets/04_05_channel_dashboard.png)
+
+![Managers](assets/04_13_manager_ranking.png)
+
+## Metrics tree
+
+The model decomposes contribution margin (CM) into the levers the business can influence. Colors show the role of a metric: goal, financial, decision, product, atomic data, info.
+
+![Metrics tree](assets/metric_tree.svg)
+
+`CM = UA x (LTV - CPA)`, `LTV = CLTV x C1`, `CLTV = AOV x APC`. COGS is not available in the data and is set to 0, so CLTV and CM are revenue-based upper bounds.
+
+## Growth hypothesis and test design
+
+**Lever:** conversion of leads into paying students (C1). It is worth the same as price or course duration in margin terms, but reacts in weeks and needs no extra ad budget.
+
+**Hypothesis (H1):** contacting a new lead within 30 minutes (instead of the current median of 5.5 hours) increases the share of qualified leads.
+
+| Element | Design |
+| :--- | :--- |
+| Unit and randomization | New lead, 50/50 at creation |
+| Exposure | 14 days, about 380 leads per arm on all incoming leads |
+| Primary metric | Share of leads rated A-C by managers (minimum detectable effect 9.5 percentage points) |
+| Guardrails | Calls per lead, manager workload, compliance with the 30-minute rule |
+| Confirmation | Payments on the same cohorts at day 45-60 (median time to payment is 17.5 days) |
+
+A payment-based decision within 14 days is not possible: detecting +25% of C1 needs about 5,700 leads per arm, roughly 30 weeks of the incoming flow. The design therefore uses a leading indicator and confirms payments afterwards.
+
+**Size of the prize:** +1% relative C1 is worth about EUR 33K of margin at constant spend; +15% is about 120 extra students and EUR 0.5M (upper bound).
+
+![Levers](assets/04_14_levers.png)
 
 ## Repository structure
 
 ```
 crm-funnel-analysis/
 ├── notebooks/
-│   ├── 01_data_prepare_calls.ipynb
-│   ├── 01_data_prepare_contacts.ipynb
-│   ├── 01_data_prepare_deals.ipynb
-│   ├── 01_data_prepare_spend.ipynb
-│   ├── 02_crm_data_analytics.ipynb       # charts render inline — no separate image export needed
-│   └── 03_crm_product_analytics.ipynb
+│   ├── 01_data_prepare_calls.ipynb       # cleaning: calls
+│   ├── 01_data_prepare_contacts.ipynb    # cleaning: contacts
+│   ├── 01_data_prepare_deals.ipynb       # cleaning: deals (leads and sales)
+│   ├── 01_data_prepare_spend.ipynb       # cleaning: marketing spend
+│   ├── 02_crm_data_analytics.ipynb       # marketing and sales analytics (EDA, channels, SLA, managers)
+│   ├── 03_crm_product_analytics.ipynb    # unit economics, metrics tree, hypothesis, A/B test design
+│   └── 04_crm_business_insights.ipynb    # business summary: key findings in charts
 ├── src/
-│   └── helpers.py          # shared EDA helper functions (stats tables, outlier detection, plots)
-├── assets/
-│   ├── metric_tree.svg     # business metrics tree (referenced in 02, kept standalone for reuse)
-│   └── dashboard.png       # Dash app screenshot — the live dashboard itself can't render on GitHub
+│   └── helpers.py                        # shared EDA helper functions
+├── assets/                               # charts used in this README, metrics tree, dashboard screenshot
 ├── requirements.txt
-├── .gitignore               # excludes data/ (raw + processed .pkl) — regenerated by running 01_*
 └── README.md
 ```
 
-Intermediate datasets (`data/processed/*.pkl`) are not committed — they're generated by running the `01_data_prepare_*` notebooks, which keeps the pipeline reproducible rather than shipping static data dumps.
+## Notebooks
+
+| Notebook | What it answers |
+| :--- | :--- |
+| **04 Business insights** | Start here: the business in one page, channels, speed of response, monthly dynamics, managers, levers |
+| 03 Product analytics | Unit economics by product, metrics tree, growth points, hypothesis, test design and decision rule |
+| 02 CRM data analytics | Data audit, funnel, marketing efficiency by campaign and source, SLA and lead quality, managers |
+| 01 Data preparation | Cleaning of the four source tables and the common reporting period |
+
+## Method notes
+
+- **Common period:** all datasets are cut to 2023-07-01 - 2024-05-31.
+- **Paying student:** unique student with stage "Payment Done" and months of study above zero (810). The student key is `contact_id`; 8 paid deals have no `contact_id` and are counted as separate students (key = deal id). **Transactions (T)** are paid months (4,540); **AOV** = revenue / T (EUR 737 per paid month); **APC** = T / B (5.66).
+- **Two conversion rates:** C1 of the metrics tree = students / unique potential clients (4.65%); channel and manager tables use students / leads (4.4%), because channel and manager are stored on the deal.
+- **Managers:** a manager is active in a month with at least 10 leads; metrics are per active month. The performance index is actual sales divided by the sales expected from the channel mix of the manager's leads, with a 95% interval.
+- **Months studied so far:** `months_of_study` falls from 9.7 (leads of August 2023) to 1.9 (leads of May 2024) at a course length of 10-11 months, so revenue, T and APC of recent cohorts are still accumulating and CLTV is a lower bound.
+- **Limitations:** no COGS in the data; the effect of response time is observational until the experiment is run; revenue in monthly charts is attributed to the month the lead was created, so the latest months are still maturing.
 
 ## Tech stack
 
-Python · pandas · NumPy · statsmodels (time-series decomposition) · Matplotlib · Seaborn · Plotly · Dash
+Python, pandas, NumPy, Matplotlib, Seaborn, SciPy, Jupyter. The interactive dashboard (Dash) is shown as a screenshot, because it cannot be rendered on GitHub.
 
-## Running it locally
+![Dashboard](assets/dashboard.png)
+
+## How to run
 
 ```bash
+git clone https://github.com/<your-user>/crm-funnel-analysis.git
+cd crm-funnel-analysis
 pip install -r requirements.txt
-jupyter notebook
 ```
 
-Run the `01_data_prepare_*` notebooks first (they produce the cleaned `.pkl` files the later notebooks depend on), then `02`, then `03`.
-
-## About the data
-
-The dataset is anonymized/synthetic training data used for a data analytics bootcamp project — not production data from a real company. Manager and customer names, deal values and IDs do not correspond to real individuals.
+The raw data is not published. Place the source files in `data/raw/`, then run the notebooks in order: `01_*` (creates `data/processed/*.pkl`), then `02`, `03`, `04`. Notebook 04 saves its charts to `assets/`.
