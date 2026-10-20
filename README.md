@@ -110,7 +110,7 @@ Python, pandas, NumPy, Matplotlib, Seaborn, SciPy, Jupyter. The interactive dash
 ## How to run
 
 ```bash
-git clone https://github.com/<your-user>/crm-funnel-analysis.git
+git clone https://github.com/<OlenaDeny>/crm-funnel-analysis.git
 cd crm-funnel-analysis
 pip install -r requirements.txt
 ```
