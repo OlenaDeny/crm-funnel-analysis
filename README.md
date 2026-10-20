@@ -1,6 +1,9 @@
 # CRM Funnel Analysis: unit economics, channels, sales team and a testable growth hypothesis
 
-End-to-end analytics project on CRM data of an online IT school (July 2023 - May 2024): data preparation, marketing and sales analytics, unit economics with a metrics tree, and a growth hypothesis with an A/B test design.
+Kurzfassung (DE): End-to-End-Analyseprojekt auf anonymisierten CRM-Daten eines Online-IT-Anbieters (07.2023 – 05.2024). Die Analyse zeigt, dass das Wachstum nicht über günstigeren Traffic, sondern über die Konversion von Leads zu zahlenden Kundinnen und Kunden läuft: Sie liegt bei der CRM-Basis bei 1,8 % und bei Organic bei 9,6 %. Aus dem Befund habe ich eine Hypothese zur Reaktionszeit (Erstkontakt innerhalb von 30 Minuten statt Median 5,5 Stunden) und ein A/B-Test-Design mit Guardrails und Entscheidungsregel abgeleitet. Die Daten sind anonymisierte Kursdaten, keine Produktivdaten eines Unternehmens.
+
+
+(En): End-to-end analytics project on CRM data of an online IT school (July 2023 - May 2024): data preparation, marketing and sales analytics, unit economics with a metrics tree, and a growth hypothesis with an A/B test design.
 
 **Business question:** where does the money come from, where does the funnel leak, and what is the fastest lever to grow margin?
 
